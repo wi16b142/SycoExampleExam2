@@ -19,21 +19,53 @@ using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using ItemsViewer.Model;
+using ItemsViewer.SR_Items;
 
 namespace ItemsViewer.ViewModel
 {
     public class MainViewModel : ViewModelBase
     {
+        ServiceItemsClient client = new ServiceItemsClient();
+        private string _selectedCategory;
+        public ObservableCollection<XItem> Items { get; set; }
+        public ObservableCollection<XItem> FilteredItems { get; set; }
+        public string[] Categories { get; set; }
+        public RelayCommand ResetBtnClick { get; set; }
+
+        public string SelectedCategory
+        {
+            get => _selectedCategory; set
+            {
+                _selectedCategory = value;
+                Refresh(SelectedCategory);
+            }
+        }
 
         public MainViewModel()
         {
-            if (IsInDesignMode)
+            Categories = client.GetCategories();       
+            Items = new ObservableCollection<XItem>(client.QueryAllItems());
+            FilteredItems = new ObservableCollection<XItem>(Items);
+
+            ResetBtnClick = new RelayCommand(() =>
             {
-                //design mode
-            }
-            else
+                FilteredItems.Clear();
+                foreach (var item in Items)
+                {
+                    FilteredItems.Add(item);
+                }
+            });
+        }
+
+        private void Refresh(string category)
+        {
+            FilteredItems.Clear();
+            foreach (var item in Items)
             {
-                //real life
+                if (item.Category.Equals(category))
+                {
+                    FilteredItems.Add(item);
+                }
             }
         }
     }
