@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/Shared" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Shared" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="ArrayOfXItem">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="XItem" nillable="true" type="tns:XItem" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfXItem" nillable="true" type="tns:ArrayOfXItem" />
+  <xs:complexType name="XItem">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Amount" type="xs:int" />
+      <xs:element minOccurs="0" name="Category" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Price" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="XItem" nillable="true" type="tns:XItem" />
+</xs:schema>

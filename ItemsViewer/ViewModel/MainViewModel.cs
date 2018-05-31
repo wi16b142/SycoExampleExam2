@@ -26,7 +26,7 @@ namespace ItemsViewer.ViewModel
     public class MainViewModel : ViewModelBase
     {
         ServiceItemsClient client = new ServiceItemsClient();
-        private string _selectedCategory;
+        private string _selectedCategory = "";
         public ObservableCollection<XItem> Items { get; set; }
         public ObservableCollection<XItem> FilteredItems { get; set; }
         public string[] Categories { get; set; }
@@ -43,7 +43,7 @@ namespace ItemsViewer.ViewModel
 
         public MainViewModel()
         {
-            Categories = client.GetCategories();       
+            Categories = client.GetCategories();
             Items = new ObservableCollection<XItem>(client.QueryAllItems());
             FilteredItems = new ObservableCollection<XItem>(Items);
 
@@ -55,6 +55,23 @@ namespace ItemsViewer.ViewModel
                     FilteredItems.Add(item);
                 }
             });
+
+            Task.Factory.StartNew(AutoRefresh);
+        }
+
+        private void AutoRefresh()
+        {
+            while (true)
+            {
+                App.Current.Dispatcher.Invoke(()=> 
+                {
+                    Items = null;
+                    Items = new ObservableCollection<XItem>(client.QueryAllItems());
+                    if(!SelectedCategory.Equals(""))Refresh(SelectedCategory);
+                    RaisePropertyChanged("Items");
+                });
+                Thread.Sleep(5000);
+            }
         }
 
         private void Refresh(string category)
